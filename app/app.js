@@ -14,7 +14,12 @@ var app = new Vue({
                 }]    
             }
         }
-    },
+    }, 
+    methods: {
+        itemSelected: function() {
+            console.log('here');
+        }
+    },     
     mounted: function() {
         var self = this;
         fetch('https://min-api.cryptocompare.com/data/all/coinlist')
@@ -32,7 +37,8 @@ var app = new Vue({
             .then(json => {
                 self.spec.header = 'coins';
                 self.spec.items = json;
+                self.$emit('coins-loaded');
             });          
     },
-    template: '<app-report v-bind:spec="spec"></app-report>'
+    template: '<app-report v-on:selected="itemSelected" v-bind:spec="spec"></app-report>'
 });

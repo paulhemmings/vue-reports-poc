@@ -1,18 +1,26 @@
-var ReportRow = Vue.component('report-row', {
+var ReportRow = {
     props: ['item'],
+    methods: {
+        handleClick: function() {
+            this.$emit('item-selected');
+        }
+    },  
     template: `
     <tr>                                
-        <td v-for="header in item">
-            <a href="#">{{header}}</a>
+        <td v-for="property in item">
+            <a v-on:click="handleClick" href="#">{{property}}</a>
         </td>
     </tr>
     `
-});
+};
 
-var ReportComponent = Vue.component('report', {
+var ReportComponent = {
     props: ['spec'],
     data: function(){
         return {}
+    },
+    components: {
+        'report-row': ReportRow
     },
     computed: {
         columns: function() {
@@ -21,14 +29,14 @@ var ReportComponent = Vue.component('report', {
             }
             return Object.keys(this.spec.items[0]);
         }
-    },    
+    },           
     template: `
     <div>
         <h1 class="table-header">{{spec.header}}</h1>
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th v-for="column in spec.columns">{{column}}</th>
+                    <th v-for="column in columns">{{column}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,6 +48,6 @@ var ReportComponent = Vue.component('report', {
             </tbody>
         </table>
     </div>`
-});
+};
 
 export default ReportComponent
