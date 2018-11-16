@@ -16,8 +16,16 @@ var app = new Vue({
         }
     }, 
     methods: {
-        itemSelected: function() {
-            console.log('here');
+        addPrice: function(symbol, data) {
+            const enhancedItems = [].concat(this.spec.items);
+            enhancedItems.filter(item => item.symbol == symbol).forEach(coin => coin.price = data.GBP);
+            this.spec.items = enhancedItems;
+        },        
+        itemSelected: function(item) {
+            var self = this;
+            fetch('https://min-api.cryptocompare.com/data/price?fsym=' + item.symbol + '&tsyms=GBP,USD,EUR')
+            .then(response => response.json())
+            .then(json => self.addPrice(item.symbol, json));
         }
     },     
     mounted: function() {
@@ -37,8 +45,11 @@ var app = new Vue({
             .then(json => {
                 self.spec.header = 'coins';
                 self.spec.items = json;
-                self.$emit('coins-loaded');
             });          
     },
-    template: '<app-report v-on:selected="itemSelected" v-bind:spec="spec"></app-report>'
+    template: `
+        <app-report 
+            @selected="itemSelected" 
+            v-bind:spec="spec">
+        </app-report>`
 });

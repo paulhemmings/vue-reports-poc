@@ -1,15 +1,14 @@
 var ReportRow = {
-    props: ['item'],
+    props: ['item', 'handler'], 
     methods: {
         handleClick: function() {
-            this.$emit('item-selected');
+            this.handler(this.item);
         }
-    },  
+    },
     template: `
-    <tr>                                
-        <td v-for="property in item">
-            <a v-on:click="handleClick" href="#">{{property}}</a>
-        </td>
+    <tr>               
+        <td><button v-on:click="handleClick">select</button></td>                 
+        <td v-for="property in item">{{property}}</td>
     </tr>
     `
 };
@@ -29,20 +28,27 @@ var ReportComponent = {
             }
             return Object.keys(this.spec.items[0]);
         }
-    },           
+    },    
+    methods: {
+        rowSelected: function(item) {
+            this.$emit('selected', item);
+        }
+    },            
     template: `
     <div>
         <h1 class="table-header">{{spec.header}}</h1>
         <table class="table table-striped">
             <thead>
                 <tr>
+                    <th></th>
                     <th v-for="column in columns">{{column}}</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody>                
                 <report-row
                     v-for="item in spec.items"
                     v-bind:item="item"
+                    v-bind:handler="rowSelected"
                     v-bind:key="item.id">
                 </report-row>
             </tbody>
